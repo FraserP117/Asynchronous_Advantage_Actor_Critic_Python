@@ -49,6 +49,7 @@ def worker(name, input_shape, n_actions, global_agent, optimizer, env_id,
 
             obs = T.tensor(np.array([obs]), dtype = T.float)
             # obs = T.tensor([obs], dtype = T.float) # OG Version
+
             action, value, log_prob, hidden_state = local_agent(obs, hidden_state)
             next_obs, reward, done, info = env.step(action)
 
@@ -64,8 +65,14 @@ def worker(name, input_shape, n_actions, global_agent, optimizer, env_id,
                 loss = local_agent.calc_cost(
                     obs, hidden_state, done, rewards, values, log_probs
                 )
+
                 optimizer.zero_grad()
                 hidden_state = hidden_state.detach_()
+
+                ###
+                # loss.retain_grad() ### Added line
+                ###
+
                 loss.backward() ### ------------------------ THE ISSUE WITH THE GRADIENTS IS HERE ------------------------ ###
 
                 # loss.sum().backward() # CURRENT

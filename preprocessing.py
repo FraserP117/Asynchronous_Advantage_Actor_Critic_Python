@@ -68,12 +68,14 @@ class FrameStacker(gym.ObservationWrapper):
         self.frame_stack = deque(maxlen = repeat)
 
     def reset(self):
+
         self.frame_stack.clear()
         obs = self.env.reset()
         for i in range(self.frame_stack.maxlen):
             self.frame_stack.append(obs)
 
-        return np.array(self.frame_stack).reshape(self.observation_space.low.shape) # low shape or high shape
+        return np.array(self.frame_stack, dtype = object).reshape(self.observation_space.low.shape) # low shape or high shape
+        # return frame_stack.reshape(self.observation_space.low.shape) # low shape or high shape
 
     def observation(self, observation):
         self.frame_stack.append(observation)
