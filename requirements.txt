@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 AppKit==0.2.8
 astunparse==1.6.3
 av==9.2.0
@@ -108,3 +109,10 @@ xattr==0.9.9
 xmlrunner==1.7.7
 z3==0.2.0
 zopfli==0.2.1
+=======
+gym==0.26.2
+matplotlib==3.6.1
+numpy==1.23.3
+opencv_python==4.6.0.66
+torch==1.12.1+cpu
+>>>>>>> master

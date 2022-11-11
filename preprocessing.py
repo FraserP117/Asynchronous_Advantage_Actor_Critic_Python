@@ -2,6 +2,11 @@ from collections import deque
 import cv2
 import numpy as np
 import gym
+<<<<<<< HEAD
+=======
+# import gymnasium as gym
+# from gym.utils.step_api_compatibility import step_api_compatibility
+>>>>>>> master
 
 '''
 Transform 3 channels to 1 - gray scale
@@ -11,7 +16,11 @@ swap channels to first position
 stack 4 most recent frames
 scale inputs by 255
 '''
+<<<<<<< HEAD
 # class RepeatAction(gym.ObservationWrapper):
+=======
+
+>>>>>>> master
 class RepeatAction(gym.Wrapper):
     def __init__(self, env = None, repeat = 4, fire_first = False):
         super(RepeatAction, self).__init__(env)
@@ -24,18 +33,45 @@ class RepeatAction(gym.Wrapper):
         total_reward = 0.0
         done = False
         for i in range(self.repeat):
+<<<<<<< HEAD
             next_obs, reward, done, info = self.env.step(action)
+=======
+
+            # new gym step API:
+            next_obs, reward, terminated, truncated, info = self.env.step(action)
+            done = truncated or terminated
+
+            '''
+            terminated (bool): whether a `terminal state` (as defined under the MDP of the task) is reached.
+                In this case further step() calls could return undefined results.
+            truncated (bool): whether a truncation condition outside the scope of the MDP is satisfied.
+                Typically a timelimit, but could also be used to indicate agent physically going out of bounds.
+                Can be used to end the episode prematurely before a `terminal state` is reached....
+            '''
+
+>>>>>>> master
             total_reward += reward
             if done:
                 break
 
+<<<<<<< HEAD
         return next_obs, total_reward, done, info
+=======
+        return next_obs, reward, terminated, truncated, info
+>>>>>>> master
 
     def reset(self):
         obs = self.env.reset()
         if self.fire_first:
             assert self.env.unwrapped.get_action_meanings()[1] == 'FIRE'
+<<<<<<< HEAD
             obs, _, _, _ = self.env_step(1)
+=======
+
+            # new gym step API:
+            obs, _, _, _, _ = self.env_step(1)
+
+>>>>>>> master
         return obs
 
 
@@ -64,6 +100,7 @@ class FrameStacker(gym.ObservationWrapper):
             env.observation_space.high.repeat(repeat, axis = 0),
             dtype = np.float32
         )
+<<<<<<< HEAD
         # self.env = env
         self.frame_stack = deque(maxlen = repeat)
 
@@ -76,6 +113,25 @@ class FrameStacker(gym.ObservationWrapper):
 
         return np.array(self.frame_stack, dtype = object).reshape(self.observation_space.low.shape) # low shape or high shape
         # return frame_stack.reshape(self.observation_space.low.shape) # low shape or high shape
+=======
+
+        self.frame_stack = deque(maxlen = repeat)
+
+    def reset(self):
+        self.frame_stack.clear()
+
+        obs = self.env.reset()
+
+        obs = obs[0] # just grabbing the pixel values in the image to stack. 
+
+        for i in range(self.frame_stack.maxlen):
+            self.frame_stack.append(obs)
+
+        # np_frame_stack = np.array(self.frame_stack)
+        np_frame_stack = np.array(self.frame_stack, dtype = np.float32)
+
+        return np_frame_stack.reshape(self.observation_space.low.shape)
+>>>>>>> master
 
     def observation(self, observation):
         self.frame_stack.append(observation)

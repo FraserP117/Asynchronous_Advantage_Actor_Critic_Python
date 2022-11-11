@@ -5,6 +5,10 @@ from A3C_Agent import ActorCriticNetwork
 from preprocessing import make_environment
 from memory import Memory
 from utils import plot_learning_curve
+<<<<<<< HEAD
+=======
+# from gym.utils.step_api_compatibility import step_api_compatibility
+>>>>>>> master
 
 '''
 set multiprocessing variables
@@ -47,11 +51,30 @@ def worker(name, input_shape, n_actions, global_agent, optimizer, env_id,
         hidden_state = T.zeros(1, 256)
         while not done:
 
+<<<<<<< HEAD
             obs = T.tensor(np.array([obs]), dtype = T.float)
             # obs = T.tensor([obs], dtype = T.float) # OG Version
 
             action, value, log_prob, hidden_state = local_agent(obs, hidden_state)
             next_obs, reward, done, info = env.step(action)
+=======
+            # obs = T.tensor(np.array([obs]), dtype = T.float)
+            obs = T.tensor([obs], dtype = T.float)
+
+            action, value, log_prob, hidden_state = local_agent(obs, hidden_state)
+
+            # new gym step API:
+            next_obs, reward, terminated, truncated, info = env.step(action)
+            done = truncated or terminated
+
+            '''
+            terminated (bool): whether a `terminal state` (as defined under the MDP of the task) is reached.
+                In this case further step() calls could return undefined results.
+            truncated (bool): whether a truncation condition outside the scope of the MDP is satisfied.
+                Typically a timelimit, but could also be used to indicate agent physically going out of bounds.
+                Can be used to end the episode prematurely before a `terminal state` is reached....
+            '''
+>>>>>>> master
 
             memory.store_transition(reward, value, log_prob)
             score += reward
@@ -69,6 +92,7 @@ def worker(name, input_shape, n_actions, global_agent, optimizer, env_id,
                 optimizer.zero_grad()
                 hidden_state = hidden_state.detach_()
 
+<<<<<<< HEAD
                 ###
                 # loss.retain_grad() ### Added line
                 ###
@@ -76,6 +100,12 @@ def worker(name, input_shape, n_actions, global_agent, optimizer, env_id,
                 loss.backward() ### ------------------------ THE ISSUE WITH THE GRADIENTS IS HERE ------------------------ ###
 
                 # loss.sum().backward() # CURRENT
+=======
+
+                loss.backward() ### ------------------------ THE ISSUE WITH THE GRADIENTS IS HERE ------------------------ ###
+
+                # loss.sum().backward()
+>>>>>>> master
                 T.nn.utils.clip_grad_norm_(local_agent.parameters(), 40)
 
                 for local_param, global_param in zip(

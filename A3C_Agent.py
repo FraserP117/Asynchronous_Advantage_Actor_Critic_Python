@@ -13,11 +13,14 @@ class ActorCriticNetwork(nn.Module):
         self.gamma = gamma
         self.tau = tau
 
+<<<<<<< HEAD
         '''
         Potentially need to break up the shared input layers
         to form two seperate actor and critic networks in this class.
         '''
 
+=======
+>>>>>>> master
         # Convolutional Network:
         self.cv1 = nn.Conv2d(input_dims[0], 32, 3, stride = 2, padding = 1)
         self.cv2 = nn.Conv2d(32, 32, 3, stride = 2, padding = 1)
@@ -26,8 +29,11 @@ class ActorCriticNetwork(nn.Module):
 
         output_conv_shape = self.calc_conv_output_dims(input_dims)
 
+<<<<<<< HEAD
         # print(f"\n\noutput_conv_shape: {output_conv_shape}\n\n")
 
+=======
+>>>>>>> master
         self.gru = nn.GRUCell(output_conv_shape, 256)
 
         # Actor - Policy:
@@ -45,10 +51,13 @@ class ActorCriticNetwork(nn.Module):
         return int(np.prod(dims.size()))
 
     def forward(self, state, hidden_state):
+<<<<<<< HEAD
         # print(f"\n\n\n\nIN FORWARD")
         # print(f"len(state): {len(state)}")
         # print(f"len(hidden_state): {len(hidden_state)}")
 
+=======
+>>>>>>> master
         conv1 = F.elu(self.cv1(state))
         conv2 = F.elu(self.cv2(conv1))
         conv3 = F.elu(self.cv3(conv2))
@@ -58,6 +67,7 @@ class ActorCriticNetwork(nn.Module):
 		# conv4 shape is BS x n_filters x H x W
 
         conv_state = conv4.view((conv4.size()[0], -1))
+<<<<<<< HEAD
         # conv_state = conv4.view(conv4.size()[0], -1)
         # conv_state = conv4.view(conv4.size()[0], -1) # conv4.size()[0] = BS, -1 = flatten all other dimensions CURRENT
         # flat_state = T.flatten(conv4) # (CURRENT) USING THIS NOW
@@ -69,6 +79,8 @@ class ActorCriticNetwork(nn.Module):
         # hidden_state = T.flatten(hidden_state) # (CURRENT)
 
         # hidden_state = self.gru(flat_state, (hidden_state)) # (CURRENT)
+=======
+>>>>>>> master
         hidden_state = self.gru(conv_state, (hidden_state))
 
         pi = self.pi(hidden_state)
@@ -82,8 +94,11 @@ class ActorCriticNetwork(nn.Module):
         action = dist.sample()
         log_prob = dist.log_prob(action)
 
+<<<<<<< HEAD
         # print(f"\n\n\n\naction: {action}, V: {V}, log_prob: {log_prob}, hidden_state: {hidden_state}\n\n\n\n")
 
+=======
+>>>>>>> master
         return action.numpy()[0], V, log_prob, hidden_state
         # return action, V, log_prob, hidden_state # (CURRENT)
 
@@ -91,7 +106,11 @@ class ActorCriticNetwork(nn.Module):
         # handles batch states or single states
         values = T.cat(values).squeeze()
 
+<<<<<<< HEAD
         if len(values.size()) == 1: # we have a batch of states
+=======
+        if len(values.size()) == 1: # batch of states
+>>>>>>> master
             R = values[-1] * (1 - int(done))
         elif len(values.size()) == 0: # single state
             R = values * (1 - int(done))
@@ -124,8 +143,11 @@ class ActorCriticNetwork(nn.Module):
         values = T.cat(values).squeeze()
         log_probs = T.cat(log_probs)
 
+<<<<<<< HEAD
         # print(f"\n\nlog_probs.grad_fn: {log_probs.grad_fn}\n\n")
 
+=======
+>>>>>>> master
         rewards = T.tensor(rewards)
 
         delta_t = rewards + self.gamma + values[1:] - values[:-1]
@@ -146,6 +168,7 @@ class ActorCriticNetwork(nn.Module):
         entropy_loss = (-log_probs * T.exp(log_probs)).sum()
         total_loss = actor_loss + critic_loss - 0.01 * entropy_loss
 
+<<<<<<< HEAD
         # This whole line has been added - almost certainly a better way to do this though
         # total_loss = T.tensor(total_loss, dtype = T.float, requires_grad = True) ### --------- HERE --------- ###
 
@@ -219,3 +242,6 @@ class ActorCriticNetwork(nn.Module):
     #     # total_loss = T.tensor(total_loss, dtype = T.float, requires_grad = True) ### --------- HERE --------- ###
     #
     #     return total_loss
+=======
+        return total_loss
+>>>>>>> master
