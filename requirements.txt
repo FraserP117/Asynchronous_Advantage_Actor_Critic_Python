@@ -1,0 +1,5 @@
+gym==0.26.2
+matplotlib==3.6.1
+numpy==1.23.3
+opencv_python==4.6.0.66
+torch==1.12.1+cpu
